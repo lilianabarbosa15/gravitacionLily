@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/primera">
+        <file>Spaceport_.jpg</file>
+        <file>Platform.png</file>
+        <file>Star1.png</file>
+        <file>Star2.png</file>
+        <file>Meteorite.png</file>
+    </qresource>
+    <qresource prefix="/segunda">
+        <file>Space.png</file>
+        <file>iconfinder_6_330412.png</file>
+    </qresource>
+    <qresource prefix="/tercera">
+        <file>Newplanet.jpg</file>
+        <file>meteorito.png</file>
+    </qresource>
+</RCC>

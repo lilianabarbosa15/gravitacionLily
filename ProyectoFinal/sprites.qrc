@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/aliado">
+        <file>Astronaut_Left_01.png</file>
+        <file>Astronaut_Right_01.png</file>
+        <file>Astronaut_Left_02.png</file>
+        <file>Astronaut_Right_02.png</file>
+        <file>Spaceship_01.png</file>
+        <file>Spaceship_02.png</file>
+    </qresource>
+</RCC>
