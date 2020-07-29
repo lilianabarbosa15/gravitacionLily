@@ -2,6 +2,7 @@
 #define VENTANAMODOJUEGO_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include "ventanaseleccionjuego.h"
 
 namespace Ui { class VentanaModoJuego; }

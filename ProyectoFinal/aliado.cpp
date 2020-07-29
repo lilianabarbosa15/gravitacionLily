@@ -6,12 +6,12 @@
 #include "juego.h"
 extern Juego *juego;
 
-Aliado::Aliado(int tipo, int life)      // tipo: 1 o 2 astronautas del nivel 1, 3 o 4 a naves, 5 o 6 astronautas del nivel 3.
+Aliado::Aliado(int tipo)      // tipo: 1 o 2 astronautas del nivel 1, 3 o 4 a naves, 5 o 6 astronautas del nivel 3.
 {
     jugador = tipo;
-    vidas = life;
+    //vidas_jugador = life;
     dibujarItem();
-    setPos(posicion_x, posicion_y);
+    //setPos(posicion_x, posicion_y);
 }
 void Aliado::dibujarItem()
 {
@@ -167,10 +167,10 @@ void Aliado::disparar()
             if(j>3 && j<7)
                 posicion_arma[j][0] += ancho;
         }
-        bala = new Meteorito(1,5,posicion_arma[indica_posicion_arma][0],posicion_arma[indica_posicion_arma][1],100, angulo_disparo);
+        bala = new Bala(1,4,posicion_arma[indica_posicion_arma][0],posicion_arma[indica_posicion_arma][1],100, angulo_disparo);
     }
     else
-        bala = new Meteorito(1,7,posicion_x+(ancho/2),posicion_y,100, angulo_disparo);  //SÓLO ESTÁ DISPARANDO EN 90 GRADOS
+        bala = new Bala(1,10,posicion_x+(ancho/2),posicion_y,100, angulo_disparo);  //SÓLO ESTÁ DISPARANDO EN 90 GRADOS
     balas_lanzadas.push_back(bala);
     bala->setFlag(QGraphicsItem::ItemIsFocusable);
     scene()->addItem(bala);
@@ -214,7 +214,7 @@ void Aliado::verificarChoques(unsigned short int tipo)
 {
     QList<QGraphicsItem *> colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; i++){
-        qDebug() << "chocó";
+        //qDebug() << "chocó";
         if((typeid(*(colliding_items[i]))==typeid (Plataforma)) && tipo==1){  //SOLO SE USA EN EL NIVEL 1
             posinicialY_barra = (int)(colliding_items.at(i)->pos().y()*10000);  //x10000 para darle la posición real de la barra
             posinicialX_barra = (int)(colliding_items.at(i)->pos().x()*10000);
@@ -229,29 +229,38 @@ void Aliado::verificarChoques(unsigned short int tipo)
                 colision_barra = true;
         }
 
-        if((typeid(*(colliding_items[i]))==typeid(Meteorito)) && tipo==2){  //SOLO SE USA EN EL NIVEL 1
-            colliding_items.at(i)->hide();
-            this->vidas -=1;
-            qDebug() << "CHOCA CON METEORO" << " ------vidas: " << this->vidas;
-        }
-
-        if((typeid(*(colliding_items[i]))==typeid(Moneda)) && tipo==2){  //SOLO SE USA EN EL NIVEL 1
-            if(colliding_items.at(i)->y()>180){
-                colliding_items.at(i)->hide();
-                this->puntos += 20;
+/*
+        if(typeid(*(colliding_items[i]))==typeid(Meteorito)){
+            //colliding_items.at(i)->hide();
+            if(juego->J_vidas[jugador%2]>0){
+                scene()->removeItem(colliding_items.at(i));
+                juego->J_vidas[jugador%2] -=1;
+                //juego->DisminuirVidas();
             }
-            else
+            if(juego->J_vidas[jugador%2]==0){ //El personaje muere
+                if(this->vivo==true){
+                    this->vivo=false;
+                    scene()->removeItem(this);
+                }
+            }
+            qDebug() << "CHOCA CON METEORO" << " ------vidas: " << juego->J_vidas[jugador%2];
+        }
+*/
+
+        if(typeid(*(colliding_items[i]))==typeid(Moneda)){
+            if(juego->getNivel()==1 && colliding_items.at(i)->y()<180)
                 this->next_nivel = true;
-            qDebug() << "CHOCA CON estrella" << ": " << this->puntos << "estado: " << this->next_nivel;
+            qDebug() << "Estado: " << this->next_nivel;
         }
 
-
+/*
         qDebug() << "chocó con plataforma   -------->  pos_y " << this->y()+alto <<
                                                      " pos_x " << this->x() <<
                                                      " posinicialY_barra " <<posinicialY_barra <<
                                                      " posinicialX_barra " <<posinicialX_barra <<
                                                      " saltando " <<saltando <<
                                                      " colision_barra "<< colision_barra;
+*/
 
     }
 }

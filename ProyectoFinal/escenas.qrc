@@ -7,11 +7,13 @@
         <file>Meteorite.png</file>
     </qresource>
     <qresource prefix="/segunda">
-        <file>Space.png</file>
-        <file>iconfinder_6_330412.png</file>
+        <file>DisparoNaveA.png</file>
+        <file>Space.jpg</file>
+        <file>DisparoNaveEnemiga.png</file>
     </qresource>
     <qresource prefix="/tercera">
         <file>Newplanet.jpg</file>
         <file>meteorito.png</file>
+        <file>DisparoAliado.png</file>
     </qresource>
 </RCC>

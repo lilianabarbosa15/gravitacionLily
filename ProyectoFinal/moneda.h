@@ -20,18 +20,25 @@ class Moneda: public QGraphicsItem
      de lo contrario girará el sentido antihorario.
     */
 private:
-    int valor=0; //Cantidad de puntos que tendrá la moneda
+    int valor=0, tiempo=0;
     double posX=0,posY=0,radioGiro=0,radioMoneda=0; //posición de la moneda, radio de giro y radio de la moneda
     double velAngular=0, angulo=0,Xinicial=0,Yinicial=0;
     QPixmap apariencia;
+    bool InScene=true;
 
 public:
-    Moneda(int _valor, double radio_moneda, double radio_giro,double x_inicial, double y_inicial, double _velAngular );
+    Moneda(int _valor, double radio_moneda, double radio_giro,double x_inicial, double y_inicial, double _velAngular,int _tiempo=0);
     void Aparecer();
     void Mover();
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
 
+    int getTiempo() const;
+    void setTiempo(int value);
+    bool getInScene() const;
+    void setInScene(bool value);
+
+    void AumentarPuntaje();
 };
 
 #endif // MONEDA_H

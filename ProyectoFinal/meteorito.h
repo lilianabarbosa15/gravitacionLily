@@ -30,7 +30,7 @@ private:
     double posX=0, posY=0, V0=0, Vx=0,Vy=0;
     double angulo=0, radio=0;
     double a=9.8,delta=0.1; //delta: cambio en el tiempo (variar segun timer para mayor o
-    //menor velocidad de la animacion)
+                            //menor velocidad de la animacion)
     unsigned int tipo=0;
     unsigned int contRebote=0; //para implementacion de rebotes (por probar)
     QPixmap apariencia;
@@ -46,6 +46,9 @@ public:
     void setA(double value);
     float getPosicionY();
     float getPosicionX();
+
+    //void verificarChoques(unsigned int o, QVector<Aliado *> jugadores);
+
 };
 
 

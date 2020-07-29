@@ -2,6 +2,9 @@
 #define VENTANAJUEGO_H
 
 
+#include <QLabel>
+#include <QDialog>
+
 #include <QTimer>
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -25,6 +28,7 @@ public:
 
 private slots:
     void on_actionMusica_triggered();
+    void on_actionSobrePersonajes_triggered();
     void on_inicioJuego_clicked();
     void on_pausaJuego_clicked();
 

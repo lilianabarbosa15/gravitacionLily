@@ -7,4 +7,7 @@
         <file>Spaceship_01.png</file>
         <file>Spaceship_02.png</file>
     </qresource>
+    <qresource prefix="/Enemigo">
+        <file>SpaceshipE.png</file>
+    </qresource>
 </RCC>

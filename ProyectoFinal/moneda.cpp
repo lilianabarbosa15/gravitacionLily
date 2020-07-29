@@ -1,9 +1,13 @@
 #include "moneda.h"
+#include "aliado.h"
+#include "juego.h"
+#include <QDebug> //
 
+extern Juego *juego;
 
-Moneda::Moneda(int _valor, double radio_moneda, double radio_giro, double x_inicial, double y_inicial, double _velAngular)
+Moneda::Moneda(int _valor, double radio_moneda, double radio_giro, double x_inicial, double y_inicial, double _velAngular, int _tiempo)
 {
-    valor=_valor;
+    valor=_valor;   //Cantidad de puntos que tendrá la moneda
     radioMoneda=radio_moneda;
     radioGiro=radio_giro;
     posX=x_inicial;
@@ -11,12 +15,12 @@ Moneda::Moneda(int _valor, double radio_moneda, double radio_giro, double x_inic
     Xinicial=x_inicial;
     Yinicial=y_inicial;
     velAngular=_velAngular;
+    tiempo=_tiempo;
     if(valor==0)
         apariencia = QPixmap(":/primera/Star1.png");
     else
         apariencia = QPixmap(":/primera/Star2.png");
     Aparecer();
-
 }
 
 void Moneda::Aparecer()
@@ -31,8 +35,7 @@ void Moneda::Mover()
     angulo+=velAngular;
     posX=Xinicial+radioGiro*cos(angulo);
     posY=Yinicial+radioGiro*sin(angulo);
-    setPos(posX,posY);
-
+    Aparecer();
 }
 
 QRectF Moneda::boundingRect() const
@@ -45,3 +48,42 @@ void Moneda::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
     painter->drawPixmap(boundingRect(),apariencia,apariencia.rect());
 }
+
+int Moneda::getTiempo() const
+{
+    return tiempo;
+}
+
+void Moneda::setTiempo(int value)
+{
+    tiempo = value;
+}
+
+bool Moneda::getInScene() const
+{
+    return InScene;
+}
+
+void Moneda::setInScene(bool value)
+{
+    InScene = value;
+}
+
+void Moneda::AumentarPuntaje()
+{
+    QList<QGraphicsItem *> colliding_items = collidingItems();
+    for(int i=0, n=colliding_items.size(); i<n; i++){
+        qDebug() << "chocó";
+        if(typeid(*(colliding_items[i]))==typeid(Aliado)){
+            if(this->valor>0){
+                juego->puntajeNivel += this->valor;
+                this->hide();
+                scene()->removeItem(this);
+            }
+            colliding_items.clear();
+            qDebug() << "CHOCA CON estrella";
+        }
+    }
+}
+
+

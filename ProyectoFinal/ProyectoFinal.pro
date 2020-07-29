@@ -25,6 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         aliado.cpp \
+        bala.cpp \
+        enemigo.cpp \
         escritor.cpp \
         juego.cpp \
         main.cpp \
@@ -38,7 +40,9 @@ SOURCES += \
 
 HEADERS += \
         aliado.h \
+        bala.h \
         cuerpo.h \
+        enemigo.h \
         escritor.h \
         informacion.h \
         juego.h \

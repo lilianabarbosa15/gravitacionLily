@@ -7,7 +7,6 @@ extern infoArchivo infoUsuario;
 extern QVector<infoArchivo> informacionJuego;
 
 #include <QDialog> //
-#include <QLabel>
 
 VentanaModoJuego::VentanaModoJuego(QWidget *parent) : QMainWindow(parent), ui(new Ui::VentanaModoJuego)
 {
@@ -21,40 +20,18 @@ VentanaModoJuego::~VentanaModoJuego()
 
 void VentanaModoJuego::on_actionSobrePersonajes_triggered()
 {
-    /*QDialog *dialog = new QDialog();
+    QDialog *dialog = new QDialog();
     dialog->setWindowIcon(QIcon(":/iconos/iconW_nave.png"));
     dialog->setWindowTitle("Información de personajes");
-    dialog->setGeometry(this->x(),this->y(),200,200);
+    dialog->setGeometry(this->x(),this->y(),500,500);
+    dialog->setFixedSize(500,500);
     dialog->setStyleSheet("background-color:black;");
-    */
+    dialog->setWindowFlags(dialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    QWidget *dialog = new QWidget();
-    dialog->setWindowIcon(QIcon(":/iconos/iconW_nave.png"));
-    dialog->setWindowTitle("Información de personajes");
-    dialog->setGeometry(this->x(),this->y(),200,200);
-    dialog->setStyleSheet("background-color:black;");
+    QLabel *label = new QLabel(dialog);
+    label->setPixmap(QPixmap(":/info/Personajes_SinDescripcion.png").scaled(500,500));
 
-    QGraphicsScene *scene =new QGraphicsScene(dialog);
-    scene->setParent(dialog);
-    scene->setSceneRect(0,0,100,100);
-    scene->addPixmap(QPixmap(":/info/Personajes_SinDescripcion.png").scaled(100,100));
-
-
-
-
-
-    //QPixmap info = QPixmap(":/info/Personajes_SinDescripcion.png");
-    //dialog->render(&info);
-
-
-
-
-                                /*
-                                FALTA CUADRARLO PARA PONERLE LA IMAGEN CORRESPONDIENTE
-                                A LA INFORMACIÓN DE LOS PERSONAJES.
-                                */
-
-    //dialog->setModal(true);
+    dialog->setModal(true);
     dialog->setVisible(true);
 }
 

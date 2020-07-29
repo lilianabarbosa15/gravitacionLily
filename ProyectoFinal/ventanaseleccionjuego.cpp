@@ -28,15 +28,16 @@ VentanaSeleccionJuego::~VentanaSeleccionJuego()
 
 void VentanaSeleccionJuego::on_actionSobrePersonajes_triggered()
 {
-    QDialog *dialog = new QDialog;
+    QDialog *dialog = new QDialog();
     dialog->setWindowIcon(QIcon(":/iconos/iconW_nave.png"));
     dialog->setWindowTitle("Información de personajes");
-    dialog->setGeometry(this->x(),this->y(),200,200);
+    dialog->setGeometry(this->x(),this->y(),500,500);
+    dialog->setFixedSize(500,500);
+    dialog->setStyleSheet("background-color:black;");
+    dialog->setWindowFlags(dialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-                                /*
-                                FALTA CUADRARLO PARA PONERLE LA IMAGEN CORRESPONDIENTE
-                                A LA INFORMACIÓN DE LOS PERSONAJES.
-                                */
+    QLabel *label = new QLabel(dialog);
+    label->setPixmap(QPixmap(":/info/Personajes_SinDescripcion.png").scaled(500,500));
 
     dialog->setModal(true);
     dialog->setVisible(true);
@@ -89,5 +90,5 @@ void VentanaSeleccionJuego::cambiarVentana()
     playlist->addMedia(QUrl("qrc:/sonidos/nocturnal.mp3"));
     playlist->setPlaybackMode(QMediaPlaylist::Loop);    //Se genera un loop con la musica de fondo que se desea
     musica->setPlaylist(playlist);
-    musica->play();
+    //musica->play();   //Para inicializar la música del juego
 }

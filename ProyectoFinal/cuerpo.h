@@ -10,7 +10,6 @@ class cuerpo
 public:
     //Funciones virtuales puras:
     virtual void dibujarItem() = 0;
-    virtual void calcularmovimiento(int evento) = 0;
     virtual void disparar()=0;
     virtual void verificarMovimiento() = 0;
 

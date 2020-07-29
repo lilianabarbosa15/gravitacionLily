@@ -1,4 +1,9 @@
 #include "meteorito.h"
+#include "aliado.h"
+#include "juego.h"
+#include <QDebug> //
+
+extern Juego *juego;
 
 
 Meteorito::Meteorito(unsigned int _tipo, double _radio, double X, double Y, double _V0, double _angulo)
@@ -9,10 +14,12 @@ Meteorito::Meteorito(unsigned int _tipo, double _radio, double X, double Y, doub
     posY=Y;
     angulo=_angulo; //Por default se tiene 3PI/2
     V0=_V0;
-    if(tipo==0)
+    if(tipo==0) //Meteorito que cae en el nivel 1
         apariencia = QPixmap(":/primera/Meteorite.png");
-    else if(tipo == 1)
-        apariencia = QPixmap(":/segunda/iconfinder_6_330412.png");
+    else if(tipo==1)  //Disparo de nave aliada en nivel 2
+        apariencia = QPixmap(":/segunda/DisparoNaveA.png");
+    else if(tipo==2)    //Disparo de nave enemiga en el nivel 2
+        apariencia = QPixmap(":/segunda/DisparoNaveEnemiga.png");
     setPos(posX,posY);
 }
 
@@ -23,7 +30,6 @@ QRectF Meteorito::boundingRect() const
 
 void Meteorito::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //Tipo 1: meteorito, Tipo 2:disparo
     painter->drawPixmap(boundingRect(),apariencia,apariencia.rect());
 }
 
@@ -73,3 +79,30 @@ float Meteorito::getPosicionX()
 {
     return posX;
 }
+
+/*
+void Meteorito::verificarChoques(unsigned int o, QVector<Aliado *> jugadores)
+{
+    QList<QGraphicsItem *> colliding_items = collidingItems();
+    for(int i=0, n=colliding_items.size(); i<n; i++){
+        //qDebug() << "chocó";
+        if(jugadores.at(0)->x() == colliding_items.at(i)->x())
+            qDebug() << "EL CUERPO 1 CHOCÓ CON UN ASTEROIDE";
+        else
+            qDebug() << "EL CUERPO 2 CHOCÓ CON UN ASTEROIDE";
+
+        if((typeid(*(colliding_items[i]))==typeid(Aliado))){
+            Desaparecer();
+            juego->disparosEnemigos.remove(o);
+        }
+    }
+}
+*/
+
+
+
+
+
+
+
+

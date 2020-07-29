@@ -6,6 +6,7 @@
 #include <QGraphicsRectItem>
 #include <QTimer>
 #include "cuerpo.h"
+#include "bala.h"
 #include "meteorito.h"
 
 #define Gravedad 9.8
@@ -17,10 +18,10 @@
 class Aliado: public cuerpo, public QGraphicsPixmapItem
 {
 public:
-    Aliado(int x, int life);
+    Aliado(int x);
     void dibujarItem() override;
 
-    void calcularmovimiento(int evento) override;
+    void calcularmovimiento(int evento);
     void moverX(int evento);
     void moverY(unsigned short int tipo=1); //Predeterminadamente salta //SOLO SE USA EN EL NIVEL 1
     void actualizarcoordenadas(int posY_barra);
@@ -34,9 +35,11 @@ public:
 public:
     bool saltando = false, colision_barra = false;
     int posinicialY_barra = 400, posinicialX_barra = 0;
-    unsigned short int vidas = 0, puntos = 0;
+
+    //unsigned short int vidas_jugador = 0; // puntos = 0;
     bool next_nivel = false;
-    QVector<Meteorito*> balas_lanzadas = {};
+    bool vivo = true;
+    QVector<Bala*> balas_lanzadas = {};
 
 private:
     unsigned short int jugador;
@@ -52,7 +55,7 @@ private:
     int posiciony_bala = posicion_y;
     int posicion_arma [7][2] = {};  //Posiciones de izquierda a derecha
     int indica_posicion_arma = 3;
-    Meteorito *bala;
+    Bala *bala;
 
     unsigned int barra=0;
     unsigned short int friccion = 0;
