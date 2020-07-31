@@ -57,16 +57,17 @@ void VentanaJuego::on_inicioJuego_clicked()
         connect(juego->timer,SIGNAL(timeout()),this,SLOT(actualizar()));
         juego->timer->start(dt);
         if(juego->getNivel()==1){
-            juego->timer = new QTimer;
-            juego->temporizadores.push_back(juego->timer);
-            connect(juego->timer,SIGNAL(timeout()),juego,SLOT(NuevosMeteoritos()));
-            juego->timer->start(dt*95);
+            //juego->timer = new QTimer;
+            //juego->temporizadores.push_back(juego->timer);
+            //connect(juego->timer,SIGNAL(timeout()),juego,SLOT(NuevosMeteoritos()));
+            //juego->timer->start(dt*95);
+            /*
             juego->timer = new QTimer;
             juego->temporizadores.push_back(juego->timer);
             connect(juego->timer,SIGNAL(timeout()),juego,SLOT(NuevosPuntos()));
             juego->timer->start(dt*150);
+            */
         }
-
         estado_juego = true;
     }
 }
@@ -96,34 +97,34 @@ bool VentanaJuego::eventFilter(QObject *obj, QEvent *event)
         pressedKeys += ((QKeyEvent*)event)->key();
         ///////////////////////////////////////////////////////// IZQUIERDA
         if(pressedKeys.contains(Qt::Key_A) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_A);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_A);
         if((pressedKeys.contains(Qt::Key_H) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_A);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_A);
         ///////////////////////////////////////////////////////// DERECHA
         if(pressedKeys.contains(Qt::Key_S) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_S);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_S);
         if((pressedKeys.contains(Qt::Key_J) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_S);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_S);
         ///////////////////////////////////////////////////////// SALTAR
         if(pressedKeys.contains(Qt::Key_W) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_W);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_W);
         if((pressedKeys.contains(Qt::Key_U) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_W);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_W);
         ///////////////////////////////////////////////////////// DISPARAR
         if(pressedKeys.contains(Qt::Key_D) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_D);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_D);
         if((pressedKeys.contains(Qt::Key_K) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_D);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_D);
         ///////////////////////////////////////////////////////// MOVER-ARMA DERECHA
         if(pressedKeys.contains(Qt::Key_R) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_R);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_R);
         if((pressedKeys.contains(Qt::Key_O) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_R);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_R);
         ///////////////////////////////////////////////////////// MOVER-ARMA IZQUIERDA
         if(pressedKeys.contains(Qt::Key_F) && juego->J_vivo[0]==true)
-            juego->getJugadores().at(0)->calcularmovimiento(Qt::Key_F);
+            juego->jugadores.at(0)->calcularmovimiento(Qt::Key_F);
         if((pressedKeys.contains(Qt::Key_L) && juego->getModoJuego()==true) && juego->J_vivo[1]==true)
-            juego->getJugadores().at(1)->calcularmovimiento(Qt::Key_F);
+            juego->jugadores.at(1)->calcularmovimiento(Qt::Key_F);
     }
     else if(event->type()==QEvent::KeyRelease)
     {

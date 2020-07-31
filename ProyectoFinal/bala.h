@@ -6,7 +6,8 @@
 class Bala: public Meteorito//, public QObject
 {
     using Meteorito::Meteorito;
-    void verificarChoques();
+//public:
+    //void verificarChoques();
 };
 
 #endif // BALA_H

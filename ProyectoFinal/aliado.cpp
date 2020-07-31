@@ -6,10 +6,10 @@
 #include "juego.h"
 extern Juego *juego;
 
-Aliado::Aliado(int tipo)      // tipo: 1 o 2 astronautas del nivel 1, 3 o 4 a naves, 5 o 6 astronautas del nivel 3.
+Aliado::Aliado(int tipo, unsigned short int life)      // tipo: 1 o 2 astronautas del nivel 1, 3 o 4 a naves, 5 o 6 astronautas del nivel 3.
 {
     jugador = tipo;
-    //vidas_jugador = life;
+    vidas = life;
     dibujarItem();
     //setPos(posicion_x, posicion_y);
 }
@@ -134,6 +134,7 @@ void Aliado::moverArma(float posibleangulo, int direccion)
     }
 }
 
+/*
 void Aliado::actualizarDisparos()
 {
     // Desaparece o actualiza la bala lanzada, dependiendo de la ubicación de esta
@@ -148,7 +149,9 @@ void Aliado::actualizarDisparos()
             this->balas_lanzadas.remove(n);
         }
     }
+
 }
+*/
 
 void Aliado::disparar()
 {
@@ -171,9 +174,38 @@ void Aliado::disparar()
     }
     else
         bala = new Bala(1,10,posicion_x+(ancho/2),posicion_y,100, angulo_disparo);  //SÓLO ESTÁ DISPARANDO EN 90 GRADOS
-    balas_lanzadas.push_back(bala);
+    juego->disparosAliados.push_back(bala);
     bala->setFlag(QGraphicsItem::ItemIsFocusable);
     scene()->addItem(bala);
+}
+
+bool Aliado::ColisionBala()
+{
+    QList<QGraphicsItem*>Colision=collidingItems();
+    for(int i=0; i<Colision.size();i++){
+        if(typeid(*Colision.at(i))==typeid(Meteorito)){
+            scene()->removeItem(Colision.at(i));
+            return true;
+        }
+    }
+    return false;
+}
+
+void Aliado::actualizarVida(unsigned short tipoaliado)
+{
+    if(vidas==0){
+        this->hide();
+        if(juego->J_vivo[tipoaliado]==true){
+            juego->J_vivo[tipoaliado] = false;
+            scene()->removeItem(juego->jugadores.at(tipoaliado));
+        }
+    }
+    else if(vidas>0 && ColisionBala()==true){
+        vidas--;
+        if(juego->getNivel()==1)
+            juego->meteoritos.remove(0);
+    }
+    qDebug() << "COLISIONÓ CON METEORO";
 }
 
 void Aliado::verificarMovimiento()
@@ -228,24 +260,6 @@ void Aliado::verificarChoques(unsigned short int tipo)
             if(((this->y()+alto)-(posinicialY_barra))<=5 && ((this->y()+alto)-(posinicialY_barra))>0)  //¿SOBRE UNA PLATAFORMA?
                 colision_barra = true;
         }
-
-/*
-        if(typeid(*(colliding_items[i]))==typeid(Meteorito)){
-            //colliding_items.at(i)->hide();
-            if(juego->J_vidas[jugador%2]>0){
-                scene()->removeItem(colliding_items.at(i));
-                juego->J_vidas[jugador%2] -=1;
-                //juego->DisminuirVidas();
-            }
-            if(juego->J_vidas[jugador%2]==0){ //El personaje muere
-                if(this->vivo==true){
-                    this->vivo=false;
-                    scene()->removeItem(this);
-                }
-            }
-            qDebug() << "CHOCA CON METEORO" << " ------vidas: " << juego->J_vidas[jugador%2];
-        }
-*/
 
         if(typeid(*(colliding_items[i]))==typeid(Moneda)){
             if(juego->getNivel()==1 && colliding_items.at(i)->y()<180)

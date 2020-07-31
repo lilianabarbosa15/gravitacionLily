@@ -5,9 +5,10 @@
 
 extern Juego *juego;
 
-Moneda::Moneda(int _valor, double radio_moneda, double radio_giro, double x_inicial, double y_inicial, double _velAngular, int _tiempo)
+Moneda::Moneda(int _valor, double radio_moneda, double radio_giro,double x_inicial, double y_inicial, double _velAngular, unsigned short int tipo_, int _tiempo)
 {
     valor=_valor;   //Cantidad de puntos que tendrá la moneda
+    tipo = tipo_;
     radioMoneda=radio_moneda;
     radioGiro=radio_giro;
     posX=x_inicial;
@@ -16,10 +17,12 @@ Moneda::Moneda(int _valor, double radio_moneda, double radio_giro, double x_inic
     Yinicial=y_inicial;
     velAngular=_velAngular;
     tiempo=_tiempo;
-    if(valor==0)
+    if(tipo==1)
         apariencia = QPixmap(":/primera/Star1.png");
-    else
+    else if(tipo==2)
         apariencia = QPixmap(":/primera/Star2.png");
+    else if(tipo==3)
+        apariencia = QPixmap(":/segunda/Star3.png");
     Aparecer();
 }
 
@@ -69,7 +72,7 @@ void Moneda::setInScene(bool value)
     InScene = value;
 }
 
-void Moneda::AumentarPuntaje()
+void Moneda::AumentarPuntaje(unsigned int E, unsigned short int tipoaliado)
 {
     QList<QGraphicsItem *> colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; i++){
@@ -78,10 +81,20 @@ void Moneda::AumentarPuntaje()
             if(this->valor>0){
                 juego->puntajeNivel += this->valor;
                 this->hide();
+                this->tiempo = 0;
+                //colliding_items.at(i)->hide();
+                juego->estrellas.removeAt(E);
                 scene()->removeItem(this);
             }
-            colliding_items.clear();
+            else if(valor==0 && juego->getNivel()==1) //Nivel superado...
+                juego->jugadores.at(tipoaliado)->NivelSuperado = true;
             qDebug() << "CHOCA CON estrella";
+        }
+        else if(typeid(*(colliding_items[i]))==typeid(Bala)){
+            juego->puntajeNivel += this->valor;
+            this->hide();
+            this->tiempo = 0;
+            //scene()->removeItem(this);
         }
     }
 }

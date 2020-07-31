@@ -11,7 +11,7 @@ public:
     //Funciones virtuales puras:
     virtual void dibujarItem() = 0;
     virtual void disparar()=0;
-    virtual void verificarMovimiento() = 0;
+    //virtual void verificarMovimiento(unsigned short int, unsigned int, unsigned short int) = 0;
 
 };
 

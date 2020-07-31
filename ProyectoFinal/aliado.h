@@ -18,18 +18,21 @@
 class Aliado: public cuerpo, public QGraphicsPixmapItem
 {
 public:
-    Aliado(int x);
+    Aliado(int x, unsigned short int life);
+
     void dibujarItem() override;
+    void disparar() override;
+
+    bool ColisionBala();
+    void actualizarVida(unsigned short int tipoaliado);
 
     void calcularmovimiento(int evento);
     void moverX(int evento);
     void moverY(unsigned short int tipo=1); //Predeterminadamente salta //SOLO SE USA EN EL NIVEL 1
     void actualizarcoordenadas(int posY_barra);
     void moverArma(float posibleangulo, int direccion);
-    void actualizarDisparos();
-    void disparar() override;
 
-    void verificarMovimiento() override;
+    void verificarMovimiento();// override;
     void verificarChoques(unsigned short int tipo=1);
 
 public:
@@ -39,7 +42,8 @@ public:
     //unsigned short int vidas_jugador = 0; // puntos = 0;
     bool next_nivel = false;
     bool vivo = true;
-    QVector<Bala*> balas_lanzadas = {};
+    unsigned short int vidas = 0;
+    bool NivelSuperado = false;
 
 private:
     unsigned short int jugador;

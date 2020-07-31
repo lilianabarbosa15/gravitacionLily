@@ -27,25 +27,24 @@ Juego::Juego(QObject *parent): QObject{parent}
 {
     if(infoUsuario.string1=="<M>"){
         multijugador=true;
-        J_vidas[1] = J_vidas[0] = 5;
     }else{
         multijugador=false;
-        J_vidas[0] = 5;
     }
     puntaje = infoUsuario.int1;
     localizacion = infoUsuario.int2;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if(localizacion==1)     //............................NIVEL 1
     {
-        estrella = new Moneda(0,15,10,530,60,0.2);
-        estrellas.push_back(estrella);
-        escena->addItem(estrella);
-
+        //estrella = new Moneda(0,15,10,530,60,0.2);
+        //estrella = new Moneda(0,15,10,530,360,0.2,1,duracion);
+        //NuevosPuntos();
         escena->setBackgroundBrush(QBrush(QImage(":/primera/Spaceport_.jpg").scaled(680,400)));
 
         if(multijugador==true){
+            cantidadMonedas = 80;
             J_vivo[1]=true;
-        }
+        }else
+            cantidadMonedas = 50;
 
         plataformas.push_back(new Plataforma(680,1,0,400,0,0,0,0,0));         //PLATAFORMA DEL SUELO QUE NO SE VE
         escena->addItem(plataformas.back());
@@ -79,9 +78,9 @@ Juego::Juego(QObject *parent): QObject{parent}
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if(localizacion%2==1){                                  //AÑADE PERSONAJES A LA ESCENA
-        jugadores.push_back(new Aliado(localizacion));
+        jugadores.push_back(new Aliado(localizacion, 2));
         if(multijugador == true)
-            jugadores.push_back(new Aliado(localizacion+1));
+            jugadores.push_back(new Aliado(localizacion+1, 2));
         for(short int u=0; u<jugadores.size(); u++){
             escena->addItem(jugadores.at(u));
             jugadores.at(u)->setFlag(QGraphicsItem::ItemIsFocusable);
@@ -92,17 +91,30 @@ Juego::Juego(QObject *parent): QObject{parent}
 
 void Juego::actualizar()
 {
-    for(unsigned short int o=0; o<(unsigned)jugadores.size(); o++)
-        jugadores.at(o)->verificarChoques(2);   //¿Choca con un meteorito?
+    //for(unsigned short int o=0; o<(unsigned)jugadores.size(); o++)
+    //    jugadores.at(o)->verificarChoques(2);   //¿Choca con un meteorito?
 
+    contTime++;
     AumentarPuntaje();
+    DisminuirVidas();       //Para actualizar las vidas de los personajes
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if(localizacion==1) //............................NIVEL 1
     {
+        //if(contTime%10==0)
+        //    NuevosPuntos();
+        if(contTime%70==0)
+            NuevosMeteoritos();
+        for(int tipo_a=0; tipo_a<jugadores.size(); tipo_a++){
+            for(unsigned int m_cae=0; m_cae<(unsigned)meteoritos.size(); m_cae++){
+                juego->jugadores.at(tipo_a)->actualizarVida(tipo_a);  //¿Algún meteoro chocó con el personaje?
+            }
+        }
+        /*
         for(unsigned int n=0; n<(unsigned)estrellas.size(); n++){
             estrellas.at(n)->Mover();
             estrellas.at(n)->AumentarPuntaje();
         }
+        */
         for(unsigned short int u=0; u<(unsigned)meteoritos.size(); u++){
             if(meteoritos.at(u)->getPosicionY()<=400){
                 meteoritos.at(u)->ActualizarVelocidad();
@@ -112,8 +124,10 @@ void Juego::actualizar()
                 meteoritos.remove(u);
             }
         }
+
         for(int i=0; i<plataformas.size();i++)
             plataformas.at(i)->Mover();
+
         for(unsigned short int u=0; u<(unsigned)jugadores.size(); u++){
             if(jugadores.at(u)->posinicialX_barra==60)     //¿Sobre plataforma en movimiento?
                 jugadores.at(u)->actualizarcoordenadas(plataformas.at(1)->getPosY());
@@ -122,92 +136,79 @@ void Juego::actualizar()
             else if(jugadores.at(u)->colision_barra==false)
                 jugadores.at(u)->moverY(0); //Cae
         }
-    }else if(localizacion == 3) //............................NIVEL 2
+
+    }else if(localizacion == 3) //............................NIVEL 2               //HAY QUE EVALUAR EL ESTADO DEL PROGRAMA!!!!!!!!!!!!!!!!!!!!!!!
     {
-        contTime++;
         ActualizarCountdown();  //Para que se vea el tiempo en pantalla
-        if(contTime%50==0)
+        if(contTime%20==0)
             DisparosEnemigos();     //Elección de qué enemigos dispararán
 
-        for(unsigned short int u=0; u<(unsigned)jugadores.size(); u++){  //DISPAROS DEL PERSONAJE
-            jugadores.at(u)->actualizarDisparos();
-            for(unsigned int n=0; n<(unsigned)jugadores.at(u)->balas_lanzadas.size(); n++){ //¿Algún disparo chocó con una nave?
-                if(((int)(jugadores.at(u)->balas_lanzadas.at(n)->y())<(y_nE+10)) &&
-                        ((int)(jugadores.at(u)->balas_lanzadas.at(n)->y())>2)){     // Evalua si chocó con una nave enemiga
-                    qDebug() << "POSICIÓN ARMA: " <<
-                                "PosX: " << (int)jugadores.at(u)->balas_lanzadas.at(n)->x() <<
-                                "PosY: " << (int)jugadores.at(u)->balas_lanzadas.at(n)->y();
-                    for(int i=0; i<Enemigos.size();i++){
-                        if(juego->Enemigos.at(i)->IsColliding()){
-                            Enemigo *enem=Enemigos.at(i);
-                            Enemigos.removeAt(i);
-                            delete enem;
-                        }
-                    }
-                }
+        ////////////////////////////////////Se puede poner en una pantilla////////////////////////////////////
+        for(unsigned short int bala_j=0; bala_j<(unsigned)disparosAliados.size(); bala_j++){
+            for(int tipo_e=0; tipo_e<Enemigos.size(); tipo_e++)
+                juego->Enemigos.at(tipo_e)->actualizarVida(bala_j,tipo_e);  //¿Algún disparo chocó con una nave enemiga?
+
+            if(disparosAliados.at(bala_j)->y()<0){
+                escena->removeItem(disparosAliados.at(0));
+                disparosAliados.pop_front();
+            }else{
+                disparosAliados.at(bala_j)->ActualizarVelocidad();
+                disparosAliados.at(bala_j)->ActualizarPosicion();
             }
         }
+        for(unsigned int bala_e=0; bala_e<(unsigned)disparosEnemigos.size(); bala_e++){ //Actualización de las balas del enemigo
+            for(int tipo_a=0; tipo_a<jugadores.size(); tipo_a++)
+                juego->jugadores.at(tipo_a)->actualizarVida(tipo_a);  //¿Algún disparo chocó con una nave enemiga?
 
-        for(unsigned int dE=0; dE<(unsigned)disparosEnemigos.size(); dE++){
-            //disparosEnemigos.at(dE)->verificarChoques(dE, jugadores);
-            disparosEnemigos.at(dE)->ActualizarVelocidad();
-            disparosEnemigos.at(dE)->ActualizarPosicion();
-        }
-        //DisminuirVidas();
-
-
-
-
-/*
-    if(contTime<duracion && (J_vivo[0]|| J_vivo[1])){
-        if(contTime%(duracion/cantidadMonedas)==0){
-            NuevaMoneda();
-        }
-        //Actualización de tiempos de monedas
-        if(Monedas.size()!=0){
-            for(int i=0; i<Monedas.size();i++){
-                if(Monedas.at(i)->getTiempo()>0) Monedas.at(i)->setTiempo(Monedas.at(i)->getTiempo()-1);
-                else{
-                    Scene->removeItem(Monedas.at(i));
-                    Moneda *moneda=Monedas.at(i);
-                    Monedas.removeAt(i);
-                    delete moneda;
-
-
-                }
+            if(disparosEnemigos.at(bala_e)->y()>400){
+                escena->removeItem(disparosEnemigos.at(0));
+                disparosEnemigos.pop_front();
+            }else{
+                disparosEnemigos.at(bala_e)->ActualizarVelocidad();
+                disparosEnemigos.at(bala_e)->ActualizarPosicion();
             }
         }
-
-        // jugadores.at(0)->actualizarDisparos();
-           for(int i=0; i<jugadores.size();i++){
-               if(jugadores.at(i)->VerificarVida()){
-                   //jugadores.at(i)->actualizarDisparos();
-                   if(jugadores.at(i)->saltando)
-                       jugadores.at(i)->saltar();
-               }
-               else{
-                   Scene->removeItem(jugadores.at(i));
-                   jugadores.at(i)->setVidas(0);
-                   J_vivo[i]=false;
-                   //jugadores.remove(i);
-               }
-           }
-        //--------------------------------------------------------------------------------
-     }
-    else{
-        timer->stop();
-        estado_juego=!estado_juego;
-        //LimpiarEscena();
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
     }
-*/
 
-    }else if(localizacion==5)   //NIVEL3
+
+
+
+    else if(localizacion==5)   //NIVEL3
     {
         contTime++;
         ActualizarCountdown();  //Para que se vea el tiempo en pantalla
 
-        for(unsigned short int u=0; u<(unsigned)jugadores.size(); u++)  //DISPAROS DEL PERSONAJE
-            jugadores.at(u)->actualizarDisparos();
+        //for(unsigned short int u=0; u<(unsigned)jugadores.size(); u++)  //DISPAROS DEL PERSONAJE
+            //jugadores.at(u)->actualizarDisparos();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Actualización de tiempos de monedas
+    if(estrellas.size()!=0 && estrellas.at(0)->getValor()>0){
+        for(int i=0; i<estrellas.size();i++){
+            if(estrellas.at(i)->getTiempo()>0)
+                estrellas.at(i)->setTiempo(estrellas.at(i)->getTiempo()-1);
+            else{
+                escena->removeItem(estrellas.at(i));
+                estrellas.at(i)->hide();
+                estrellas.removeAt(i);
+            }
+        }
+    }
+    if(contTime<duracion && (J_vivo[0] || J_vivo[1])){
+        for(unsigned int n=0; n<(unsigned)estrellas.size(); n++){
+            estrellas.at(n)->Mover();
+            estrellas.at(n)->AumentarPuntaje(n);
+        }
+        if(contTime%(duracion/cantidadMonedas)==0)
+            NuevosPuntos();
+    }else{
+        timer->stop();
+        J_vivo[0]=J_vivo[1]=false;
     }
 
 }
@@ -220,13 +221,13 @@ void Juego::Trackers()
     Score->setPos(Score->x(),Score->y()+5);
     escena->addItem(Score);
 
-    Lives1->setPlainText(QString("Lives P1: ")+QString::number(J_vidas[0]));
+    Lives1->setPlainText(QString("Lives P1: ")+QString::number(jugadores.at(0)->vidas));
     Lives1->setDefaultTextColor(Qt::white);
     Lives1->setFont(QFont("Book Antiqua", 14));
     Lives1->setPos(Lives1->x(),Lives1->y()+25);
     escena->addItem(Lives1);
     if(multijugador==true){
-        Lives2->setPlainText(QString("Lives P2: ")+QString::number(J_vidas[1]));
+        Lives2->setPlainText(QString("Lives P2: ")+QString::number(jugadores.at(1)->vidas));
         Lives2->setDefaultTextColor(Qt::white);
         Lives2->setFont(QFont("Book Antiqua", 14));
         Lives2->setPos(Lives2->x(),Lives2->y()+45);
@@ -246,25 +247,25 @@ void Juego::Trackers()
 void Juego::DisparosEnemigos()
 {
     //Nivel 2
+    int n = rand()%(Enemigos.size());
     if(contTime%10==0 && Enemigos.size()>0){
         int EnemDisparando=rand()%(Enemigos.size()+1);
         for(int i=0;i<=EnemDisparando;i++){
-            Enemigos.at(rand()%(Enemigos.size()))->disparar();
+            if(Enemigos.at(n)->vivo==true)
+                Enemigos.at(n)->disparar();
         }
     }
 }
 
-/*
 void Juego::DisminuirVidas()
 {
-    Lives1->setPlainText(QString("Lives P1: ")+QString::number(J_vidas[0]));
-    qDebug() << "Vidas jugador 1: " << J_vidas[0];
-    if(multijugador==true){
-        Lives2->setPlainText(QString("Lives P2: ")+QString::number(J_vidas[1]));
-        qDebug() << "Vidas jugador 2: " << J_vidas[1];
+    if(jugadores.size()>0){
+        Lives1->setPlainText(QString("Lives P1: ")+QString::number(jugadores.at(0)->vidas));
+        if(multijugador==true){
+            Lives2->setPlainText(QString("Lives P2: ")+QString::number(jugadores.at(1)->vidas));
+        }
     }
 }
-*/
 
 void Juego::AumentarPuntaje()
 {
@@ -273,16 +274,28 @@ void Juego::AumentarPuntaje()
 
 void Juego::NuevosMeteoritos()
 {
-    x_random = rand() % 680 + 10;
-    meteorito_alien = new Meteorito(0,9,x_random,0,20);
+    meteorito_alien = new Meteorito(0,9,(rand() % 650 + 10),0,20);
     meteoritos.push_back(meteorito_alien);
     escena->addItem(meteorito_alien);
 }
 
 void Juego::NuevosPuntos()
 {
-    x_random = rand() % 650 + 10;
-    estrella = new Moneda(20,9.2,3.5,x_random,370,0.1);
+    //x_random = rand() % 650 + 10;
+    //estrella = new Moneda(20,9.2,3.5,x_random,370,0.1);
+    //estrella = new Moneda(20,9.2,3.5,x_random,y_random,0.1,tiempo_estrella);
+
+    /*
+        //estrella = new Moneda(0,15,10,530,60,0.2);
+        //estrella = new Moneda(0,15,10,530,360,0.2,1,duracion);
+        NuevosPuntos();
+     */
+    if(juego->getNivel()==1 && estrellas.size()==0)
+        estrella = new Moneda(0,15,10,530,360,0.2,1,duracion+10);
+    else if(juego->getNivel()==1 && estrellas.size()>0)
+        estrella = new Moneda(20,9.2,3.5,rand() % 650 + 10,370,0.1, 2, 100);
+    else if(juego->getNivel()==2)
+        estrella = new Moneda(50,9,6,5+(std::rand()%(671)),110+(std::rand()%(271-110)),0.1, 3, 150);
     estrellas.push_back(estrella);
     escena->addItem(estrella);
 }

@@ -10,6 +10,7 @@
         <file>DisparoNaveA.png</file>
         <file>Space.jpg</file>
         <file>DisparoNaveEnemiga.png</file>
+        <file>Star3.png</file>
     </qresource>
     <qresource prefix="/tercera">
         <file>Newplanet.jpg</file>

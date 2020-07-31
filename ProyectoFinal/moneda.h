@@ -23,11 +23,12 @@ private:
     int valor=0, tiempo=0;
     double posX=0,posY=0,radioGiro=0,radioMoneda=0; //posición de la moneda, radio de giro y radio de la moneda
     double velAngular=0, angulo=0,Xinicial=0,Yinicial=0;
+    unsigned short int tipo;
     QPixmap apariencia;
     bool InScene=true;
 
 public:
-    Moneda(int _valor, double radio_moneda, double radio_giro,double x_inicial, double y_inicial, double _velAngular,int _tiempo=0);
+    Moneda(int _valor, double radio_moneda, double radio_giro,double x_inicial, double y_inicial, double _velAngular, unsigned short int tipo_=1, int _tiempo=0);
     void Aparecer();
     void Mover();
     QRectF boundingRect() const;
@@ -38,7 +39,8 @@ public:
     bool getInScene() const;
     void setInScene(bool value);
 
-    void AumentarPuntaje();
+    void AumentarPuntaje(unsigned int E=0, unsigned short int tipoaliado=0);
+    unsigned int getValor(){return valor;}
 };
 
 #endif // MONEDA_H

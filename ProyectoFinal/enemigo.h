@@ -11,17 +11,20 @@ class Enemigo: public cuerpo, public QGraphicsPixmapItem //public QGraphicsRectI
 {
 public:
     Enemigo(unsigned int tipo, unsigned short int tipo_b, unsigned short int life, int posX, int posY, int posX_arma, int posY_arma, int pos_inicialX, int pos_inicialY, float vel, float a, float theta_disparo, int radio_bala, float vel_bala);
-
+    bool ActualizarPosicion();
 
     void dibujarItem() override;
     void disparar() override;
-    void verificarMovimiento() override;
-    bool ActualizarPosicion();
-    void ColisionBala();
-    bool IsColliding();
+
+    bool ColisionBala(unsigned int balajugador);
+    void actualizarVida(unsigned int balajugador, unsigned short int tipoenemigo);
 
     int getPosicion_x() const;
     int getPosicion_y() const;
+
+public:
+    //QVector<Meteorito*> balas_lanzadas = {};
+    bool vivo = true;
 
 private:
     unsigned short int enemigo;

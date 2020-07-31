@@ -53,17 +53,6 @@ void Enemigo::disparar()
     scene()->addItem(bala);
 }
 
-
-void Enemigo::verificarMovimiento()
-{
-    if(vidas>0){
-        ColisionBala();
-    }
-    else{
-        scene()->removeItem(this);
-    }
-}
-
 bool Enemigo::ActualizarPosicion()
 {
     if(posicion_y<400){
@@ -75,35 +64,30 @@ bool Enemigo::ActualizarPosicion()
     else return true;
 }
 
-void Enemigo::ColisionBala()
+bool Enemigo::ColisionBala(unsigned int balajugador)
 {
     QList<QGraphicsItem*>Colision=collidingItems();
     for(int i=0; i<Colision.size();i++){
         if(typeid(*Colision.at(i))==typeid(Bala)){
-            if(vidas==0){
-                Colision.removeAt(i);
-                this->hide();
-            }
-            else
-                vidas--;
-            qDebug()<<"Colision con enemigo"<< ".....VIDAS: " << vidas << endl;
+            scene()->removeItem(Colision.at(i));
+            return true;
         }
     }
-
+    return false;
 }
 
-bool Enemigo::IsColliding()
+void Enemigo::actualizarVida(unsigned int balajugador, unsigned short int tipoenemigo)
 {
-    if(vidas>0){
-        ColisionBala();
+    if(vidas==0){
+        this->hide();
+        if(vivo==true){
+            juego->puntajeNivel+=100;
+            this->vivo = false;
+        }
     }
-    else{
-        //puntajeNivel+=100;
-        scene()->removeItem(this);
-        return true;
+    else if(vidas>0 && ColisionBala(balajugador)==true){
+        vidas--;
     }
-    return false;
-
 }
 
 int Enemigo::getPosicion_x() const
