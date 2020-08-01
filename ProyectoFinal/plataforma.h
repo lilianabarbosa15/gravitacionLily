@@ -31,6 +31,8 @@ public:
     int getPosY();
     int getPosX();
     int getAncho() const;
+
+    void ColisionBala();
 };
 
 

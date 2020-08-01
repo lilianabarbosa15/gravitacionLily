@@ -3,11 +3,9 @@
 
 #include "meteorito.h"
 
-class Bala: public Meteorito//, public QObject
+class Bala: public Meteorito
 {
     using Meteorito::Meteorito;
-//public:
-    //void verificarChoques();
 };
 
 #endif // BALA_H

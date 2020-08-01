@@ -17,6 +17,8 @@ VentanaJuego::VentanaJuego(QWidget *parent) : QMainWindow(parent), ui(new Ui::Ve
     ui->Grafica->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->installEventFilter(this);
     srand(unsigned(time(nullptr)));
+
+    qDebug() << "NUEVO JUEGO";
 }
 
 VentanaJuego::~VentanaJuego()
@@ -51,35 +53,19 @@ void VentanaJuego::on_actionSobrePersonajes_triggered()
 
 void VentanaJuego::on_inicioJuego_clicked()
 {
-    if((juego->getNivel()>0 && juego->getNivel()<4) && (estado_juego==false)){
+    if((juego->getNivel()>0 && juego->getNivel()<4) && (juego->estado_juego==false)){
         juego->timer = new QTimer;
-        juego->temporizadores.push_back(juego->timer);
         connect(juego->timer,SIGNAL(timeout()),this,SLOT(actualizar()));
         juego->timer->start(dt);
-        if(juego->getNivel()==1){
-            //juego->timer = new QTimer;
-            //juego->temporizadores.push_back(juego->timer);
-            //connect(juego->timer,SIGNAL(timeout()),juego,SLOT(NuevosMeteoritos()));
-            //juego->timer->start(dt*95);
-            /*
-            juego->timer = new QTimer;
-            juego->temporizadores.push_back(juego->timer);
-            connect(juego->timer,SIGNAL(timeout()),juego,SLOT(NuevosPuntos()));
-            juego->timer->start(dt*150);
-            */
-        }
-        estado_juego = true;
+        estado=juego->estado_juego = true;
     }
 }
 
 void VentanaJuego::on_pausaJuego_clicked()
 {
-    if(juego->getNivel()>0 && juego->getNivel()<4){
-        for(unsigned int i=0; i<(unsigned)juego->temporizadores.size(); i++){
-            juego->temporizadores.at(i)->stop();
-        }
-        juego->temporizadores = {};
-        estado_juego = false;
+    if((juego->getNivel()>0 && juego->getNivel()<4) && (juego->estado_juego==true)){
+        juego->timer->stop();
+        estado=juego->estado_juego = false;
     }
 }
 
@@ -90,9 +76,9 @@ void VentanaJuego::actualizar()
 
 bool VentanaJuego::eventFilter(QObject *obj, QEvent *event)
 {
-    if (!estado_juego)
+    if (!estado)
         return false;
-    if(event->type()==QEvent::KeyPress && (juego->getNivel()>0 && juego->getNivel()<4))
+    if((event->type()==QEvent::KeyPress && (juego->getNivel()>0 && juego->getNivel()<4)) && juego->estado_juego==true)
     {
         pressedKeys += ((QKeyEvent*)event)->key();
         ///////////////////////////////////////////////////////// IZQUIERDA

@@ -1,12 +1,13 @@
 #include "meteorito.h"
 #include "aliado.h"
+#include "plataforma.h"
 #include "juego.h"
 #include <QDebug> //
 
 extern Juego *juego;
 
 
-Meteorito::Meteorito(unsigned int _tipo, double _radio, double X, double Y, double _V0, double _angulo)
+Meteorito::Meteorito(unsigned int _tipo, double _radio, double X, double Y, double _V0, double _angulo, QObject *parent): QObject{parent}
 {
     tipo=_tipo;
     radio=_radio;
@@ -20,6 +21,12 @@ Meteorito::Meteorito(unsigned int _tipo, double _radio, double X, double Y, doub
         apariencia = QPixmap(":/segunda/DisparoNaveA.png");
     else if(tipo==2)    //Disparo de nave enemiga en el nivel 2
         apariencia = QPixmap(":/segunda/DisparoNaveEnemiga.png");
+    else if(tipo==3)    //Disparo aliado en el nivel 3
+        apariencia = QPixmap(":/tercera/DisparoAliado.png");
+    else if(tipo==4)    //Disparo enemigo en el nivel 3
+        apariencia = QPixmap(":/tercera/DisparoEnemigo.png");
+    else if(tipo==5)    //Disparo enemigo que rebota en el nivel 3
+        apariencia = QPixmap(":/tercera/Disparo_2_Enemigo.png");
     setPos(posX,posY);
 }
 
@@ -33,19 +40,29 @@ void Meteorito::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawPixmap(boundingRect(),apariencia,apariencia.rect());
 }
 
-void Meteorito::rebotar()
+bool Meteorito::rebotar()
 {
-    //Posible metodo para rebote
-    Vy=-Vy;
+    if(contRebote<2){
+        Vy=-Vy;
+        V0=V0*coefRestitucion;
+        angulo=atan2(Vy,Vx);
+        ActualizarVelocidad();
+        ActualizarPosicion();
+        contRebote++;
+    }
+    else{
+        return false; //Ya no rebota
+    }
+    return true; //Rebotó
 }
 
 void Meteorito::ActualizarPosicion()
 {
     //Segun ecuaciones de MRUA
     posX+=Vx*delta;
-    posY-=Vy*delta-0.5*a*delta*delta; //Resta por sistema de coordenadas de la escena
-    //(Si al implementarlo se genera una parabola que abre hacia arriba entonces cambiar
-    //por +=)
+    posY-=Vy*delta-0.5*a*delta*delta;   //Resta por sistema de coordenadas de la escena
+                                        //(Si al implementarlo se genera una parabola que abre hacia arriba entonces cambiar
+                                        //por +=)
     setPos(posX,posY);
 }
 
@@ -80,29 +97,39 @@ float Meteorito::getPosicionX()
     return posX;
 }
 
-/*
-void Meteorito::verificarChoques(unsigned int o, QVector<Aliado *> jugadores)
+void Meteorito::setDelta(int value)
+{
+    delta = value;
+}
+
+double Meteorito::getCoefRestitucion() const
+{
+    return coefRestitucion;
+}
+
+bool Meteorito::Colision()
 {
     QList<QGraphicsItem *> colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; i++){
-        //qDebug() << "chocó";
-        if(jugadores.at(0)->x() == colliding_items.at(i)->x())
-            qDebug() << "EL CUERPO 1 CHOCÓ CON UN ASTEROIDE";
-        else
-            qDebug() << "EL CUERPO 2 CHOCÓ CON UN ASTEROIDE";
-
-        if((typeid(*(colliding_items[i]))==typeid(Aliado))){
-            Desaparecer();
-            juego->disparosEnemigos.remove(o);
+        if((typeid(*(colliding_items[i]))==typeid (Plataforma))){
+            return true;
         }
     }
+    return false;
 }
-*/
 
-
-
-
-
-
-
-
+bool Meteorito::Mover()
+{
+    if(Colision()==true){
+        if(rebotar()==false)
+            return true; //Hay que eliminarlo
+    }
+    else if(posY<420){
+        ActualizarVelocidad();
+        ActualizarPosicion();
+    }
+    else{
+        return true; //Hay que eliminarlo
+    }
+    return false;
+}

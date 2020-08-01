@@ -27,7 +27,8 @@ public:
     void AumentarPuntaje();
 
     void NuevosPuntos();
-    void NuevosMeteoritos();
+    void NuevosObstaculos();
+    void ActualizarPuntos();
 
 private:
     void cambiarLocalizacion();
@@ -42,8 +43,6 @@ private:
     QGraphicsTextItem *Lives2 = new QGraphicsTextItem;  //Vidas del personaje 2 en el nivel
     QGraphicsTextItem *Time = new QGraphicsTextItem;    //Tiempo que le queda al usuario para completar el nivel
 
-
-
     QVector<Plataforma *> plataformas = {};
     int cantidadMonedas = 1;
     int y_nE;
@@ -51,11 +50,15 @@ private:
 public:
     QVector<Aliado *> jugadores = {};
     QVector<Enemigo*> Enemigos = {};
+    QList<Enemigo*> EnemEstaticos = {};
+
+    QVector<Meteorito*> disparosEnemigos = {};
+    QVector<Bala*> disparosAliados = {};
 
     int puntajeNivel = 0;
 
     QTimer *timer;                                      //Crea el timer
-    QVector<QTimer*> temporizadores = {};
+    bool estado_juego = false;                          //Determina si se leen las letras presionadas o no
 
     bool J_vivo[2]={true,false};
 
@@ -64,16 +67,15 @@ public:
     Moneda *estrella;
     QVector<Moneda *> estrellas = {};
 
-
-    QVector<Meteorito*> disparosEnemigos = {};
-    QVector<Bala*> disparosAliados = {};
-
 public:
     bool getModoJuego() { return multijugador; }
     QVector<Plataforma *> getPlataformas() { return plataformas; }
     unsigned short int getNivel();
 
+    void ReiniciarNivel();
     void CambioNivel();
+
+    //void NuevoNivel();
 
 };
 

@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         aliado.cpp \
-        bala.cpp \
         enemigo.cpp \
         escritor.cpp \
         juego.cpp \

@@ -50,9 +50,6 @@ private:
 
     //float velocidad = 200;
     //float tiempo = 0.4;
-
-//public:
-//    QList<Meteorito*> disparos = {};
 };
 
 #endif // ENEMIGO_H

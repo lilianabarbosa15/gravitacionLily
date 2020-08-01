@@ -6,8 +6,14 @@
         <file>Astronaut_Right_02.png</file>
         <file>Spaceship_01.png</file>
         <file>Spaceship_02.png</file>
+        <file>Astronaut_Gun_01.png</file>
+        <file>Astronaut_Gun_02.png</file>
     </qresource>
     <qresource prefix="/Enemigo">
         <file>SpaceshipE.png</file>
+        <file>Alien_G_R.png</file>
+        <file>Alien_G_L.png</file>
+        <file>Alien_G_DL.png</file>
+        <file>Alien_G_DR.png</file>
     </qresource>
 </RCC>

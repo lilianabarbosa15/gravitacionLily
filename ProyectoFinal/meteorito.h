@@ -2,12 +2,14 @@
 #define METEORITO_H
 
 
-#include<QGraphicsItem>
+#include<QGraphicsPixmapItem>
+#include<QObject>
 #include<QPainter>
 #include<QGraphicsScene>
 #include<math.h>
+#include<QTimer>
 
-class Meteorito: public QGraphicsItem
+class Meteorito: public QObject, public QGraphicsItem
 {
     /* Clase que se utilizara para los meteoritos del nivel 2 y los disparos del nivel3:
       El tipo 1 corresponde a los meteoritos y el tipo 2 corresponde a los disparos.
@@ -26,20 +28,23 @@ class Meteorito: public QGraphicsItem
       [0,2PI] (radianes)para obtener un movimiento parabolico (Por probar: rebote del cuerpo al chocar
       con otros cuerpos)
     */
+    Q_OBJECT
 private:
     double posX=0, posY=0, V0=0, Vx=0,Vy=0;
     double angulo=0, radio=0;
     double a=9.8,delta=0.1; //delta: cambio en el tiempo (variar segun timer para mayor o
                             //menor velocidad de la animacion)
-    unsigned int tipo=0;
+    double coefRestitucion=0.65; //0.9;
     unsigned int contRebote=0; //para implementacion de rebotes (por probar)
+    QTimer *timer= new QTimer;
+
+    unsigned int tipo=0;
     QPixmap apariencia;
 
 public:
-    Meteorito(unsigned int _tipo, double _radio, double X, double Y, double _V0, double _angulo=(3*M_PI)/2 );
+    Meteorito(unsigned int _tipo, double _radio, double X, double Y, double _V0, double _angulo=(3*M_PI)/2, QObject *parent=nullptr);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
-    void rebotar();
     void ActualizarPosicion();
     void ActualizarVelocidad();
     void Desaparecer();
@@ -47,9 +52,14 @@ public:
     float getPosicionY();
     float getPosicionX();
 
-    //void verificarChoques(unsigned int o, QVector<Aliado *> jugadores);
+    void setDelta(int value);           //  NO HEREDAR EN BALA
+    void Colisiones();                  //  NO HEREDAR EN BALA
+    double getCoefRestitucion() const;  //  NO HEREDAR EN BALA
+
+    bool Mover();
+    bool Colision();
+    bool rebotar();
 
 };
-
 
 #endif // METEORITO_H

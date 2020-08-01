@@ -11,7 +11,6 @@ Aliado::Aliado(int tipo, unsigned short int life)      // tipo: 1 o 2 astronauta
     jugador = tipo;
     vidas = life;
     dibujarItem();
-    //setPos(posicion_x, posicion_y);
 }
 void Aliado::dibujarItem()
 {
@@ -35,14 +34,15 @@ void Aliado::dibujarItem()
     if(jugador == 5){
         aparienciaR = QPixmap(":/aliado/Astronaut_Right_01.png");
         aparienciaL = QPixmap(":/aliado/Astronaut_Left_01.png");
+        aparienciaG = QPixmap(":/aliado/Astronaut_Gun_01.png");
         posicion_x = posicioninicial_x = 50;
     }
     if(jugador == 6){
         aparienciaR = QPixmap(":/aliado/Astronaut_Right_02.png");
         aparienciaL = QPixmap(":/aliado/Astronaut_Left_02.png");
+        aparienciaG = QPixmap(":/aliado/Astronaut_Gun_02.png");
         posicion_x = posicioninicial_x = 605;
     }
-
     setPixmap(aparienciaR.copy(pixX,pixY,ancho+8,alto));
     setPos(posicion_x,posicion_y);
 }
@@ -59,9 +59,9 @@ void Aliado::calcularmovimiento(int evento)
     if(evento == Qt::Key_D && jugador>2)      //DISPARA (Para los niveles 2 y 3)
         disparar();
     if(evento == Qt::Key_R && jugador>4)      //MUEVE EL ARMA HACIA DERECHA (Sólo para el nivel 3)
-        moverArma(angulo_disparo-45.0*(Pi/180.0), evento);
+        moverArma(angulo_disparo-45.0*(M_PI/180.0), evento);
     if(evento == Qt::Key_F && jugador>4)      //MUEVE EL ARMA HACIA IZQUIERDA (Sólo para el nivel 3)
-        moverArma(angulo_disparo+45.0*(Pi/180.0), evento);
+        moverArma(angulo_disparo+45.0*(M_PI/180.0), evento);
 }
 
 void Aliado::moverX(int evento)
@@ -96,7 +96,7 @@ void Aliado::moverY(unsigned short tipo)    //SOLO SE USA EN EL NIVEL 1
         {
             saltando = false;
             velocidad = V;
-            theta = Pi/180.0;
+            theta = M_PI/180.0;
             actualizarcoordenadas(juego->getPlataformas().at(barra)->getPosY());
         }
         verificarMovimiento();
@@ -122,56 +122,44 @@ void Aliado::moverArma(float posibleangulo, int direccion)
 {
     //Dependiendo de la tecla presionada mueve el arma y la posición de ella respecto al jugador
     if(direccion == Qt::Key_R){
-        if(posibleangulo>(-46.0*(Pi/180.0))){
-            angulo_disparo = posibleangulo;
+        if(posibleangulo>(-46.0*(M_PI/180.0))){
+            if(indica_posicion_arma!=3)
+                angulo_disparo = posibleangulo;
             indica_posicion_arma+=1;
         }
     }else{
-        if(posibleangulo<(226.0*(Pi/180.0))){
-            angulo_disparo = posibleangulo;
+        if(posibleangulo<(226.0*(M_PI/180.0))){
+            if(indica_posicion_arma!=4)
+                angulo_disparo = posibleangulo;
             indica_posicion_arma-=1;
         }
     }
+    setPixmap(aparienciaG.copy(pixX_G*indica_posicion_arma,pixY_G,ancho+9,alto));
 }
-
-/*
-void Aliado::actualizarDisparos()
-{
-    // Desaparece o actualiza la bala lanzada, dependiendo de la ubicación de esta
-    for(int n=0; n<this->balas_lanzadas.size(); n++)
-    {
-        if(this->balas_lanzadas.at(n)->getPosicionY()>0 &&
-                (this->balas_lanzadas.at(n)->getPosicionX()>-20 && this->balas_lanzadas.at(n)->getPosicionX()<680)){
-            this->balas_lanzadas.at(n)->ActualizarVelocidad();
-            this->balas_lanzadas.at(n)->ActualizarPosicion();
-        }else{
-            this->balas_lanzadas.at(n)->Desaparecer();
-            this->balas_lanzadas.remove(n);
-        }
-    }
-
-}
-*/
 
 void Aliado::disparar()
 {
     //Si se encuentra en el nivel 3 se ejecuta la primera serie de instrucciones
     if(juego->getNivel()==3)
     {
-        for(int j=0;j<7;j++){
+        for(int j=0;j<8;j++){
             posicion_arma[j][0] = posicion_x;
             posicion_arma[j][1] = posicion_y;
-            if(j==0 || j==6)
-                posicion_arma[j][1] += ancho;
-            if(j==1 || j==5)
-                posicion_arma[j][1] += (ancho/2);
-            if(j==3)
-                posicion_arma[j][0] += (ancho/2);
-            if(j>3 && j<7)
-                posicion_arma[j][0] += ancho;
+            if(j==0 || j==7)
+                posicion_arma[j][1] += (ancho+1);
+            if(j==1 || j==6)
+                posicion_arma[j][1] += ((ancho+9)/2);
+            if(j==3 || j==4)
+                posicion_arma[j][0] += ((ancho+9)/2);
+            if(j>4 && j<8)
+                posicion_arma[j][0] += (ancho+9);
         }
-        bala = new Bala(1,4,posicion_arma[indica_posicion_arma][0],posicion_arma[indica_posicion_arma][1],100, angulo_disparo);
+
+        qDebug() << "POSICIÓN DEL ARMA: " << "X= " << posicion_arma[indica_posicion_arma][0] << "Y= " << posicion_arma[indica_posicion_arma][1];
+        bala = new Bala(3,5,posicion_arma[indica_posicion_arma][0],posicion_arma[indica_posicion_arma][1],100, angulo_disparo);
+        setPixmap(aparienciaG.copy(pixX_G*indica_posicion_arma,pixY_G,ancho+9,alto));
     }
+
     else
         bala = new Bala(1,10,posicion_x+(ancho/2),posicion_y,100, angulo_disparo);  //SÓLO ESTÁ DISPARANDO EN 90 GRADOS
     juego->disparosAliados.push_back(bala);
@@ -205,7 +193,6 @@ void Aliado::actualizarVida(unsigned short tipoaliado)
         if(juego->getNivel()==1)
             juego->meteoritos.remove(0);
     }
-    qDebug() << "COLISIONÓ CON METEORO";
 }
 
 void Aliado::verificarMovimiento()
@@ -226,7 +213,7 @@ void Aliado::verificarMovimiento()
         saltando = false;
         actualizarcoordenadas(posinicialY_barra);
         velocidad = V;
-        theta = Pi/180.0;
+        theta = M_PI/180.0;
     }
     if(juego->getNivel()!=1)                                    //SOLO SE USA CUANDO NO SE ENCUENTRA EN EL NIVEL 1
     {
@@ -260,21 +247,5 @@ void Aliado::verificarChoques(unsigned short int tipo)
             if(((this->y()+alto)-(posinicialY_barra))<=5 && ((this->y()+alto)-(posinicialY_barra))>0)  //¿SOBRE UNA PLATAFORMA?
                 colision_barra = true;
         }
-
-        if(typeid(*(colliding_items[i]))==typeid(Moneda)){
-            if(juego->getNivel()==1 && colliding_items.at(i)->y()<180)
-                this->next_nivel = true;
-            qDebug() << "Estado: " << this->next_nivel;
-        }
-
-/*
-        qDebug() << "chocó con plataforma   -------->  pos_y " << this->y()+alto <<
-                                                     " pos_x " << this->x() <<
-                                                     " posinicialY_barra " <<posinicialY_barra <<
-                                                     " posinicialX_barra " <<posinicialX_barra <<
-                                                     " saltando " <<saltando <<
-                                                     " colision_barra "<< colision_barra;
-*/
-
     }
 }

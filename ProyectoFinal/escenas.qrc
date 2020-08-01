@@ -14,7 +14,9 @@
     </qresource>
     <qresource prefix="/tercera">
         <file>Newplanet.jpg</file>
-        <file>meteorito.png</file>
         <file>DisparoAliado.png</file>
+        <file>DisparoEnemigo.png</file>
+        <file>Platform3.png</file>
+        <file>Disparo_2_Enemigo.png</file>
     </qresource>
 </RCC>

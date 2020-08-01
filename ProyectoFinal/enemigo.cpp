@@ -27,24 +27,40 @@ void Enemigo::dibujarItem()
     if(enemigo==1)    //Naves
     {
         apariencia = QPixmap(":/Enemigo/SpaceshipE.png").scaled(ancho,alto);
-        //setBrush(Qt::blue);
     }
     else if(enemigo==2)    //Aliens DEPENDIENDO DEL ANGULO DE DISPARO SE ELIGE EL SPRITE
     {
-        //apariencia = QPixmap("");
-        //setBrush(Qt::green);
         alto = 40;
+        apariencia = QPixmap(":/Enemigo/Alien_G_R.png").scaled(ancho,alto);
+    }
+    else if(enemigo==3)
+    {
+        alto = 40;
+        apariencia = QPixmap(":/Enemigo/Alien_G_L.png").scaled(ancho,alto);
+    }
+    else if(enemigo==4)
+    {
+        alto = 40;
+        apariencia = QPixmap(":/Enemigo/Alien_G_DR.png").scaled(ancho,alto);
+    }
+    else if(enemigo==5)
+    {
+        alto = 40;
+        apariencia = QPixmap(":/Enemigo/Alien_G_DL.png").scaled(ancho,alto);
     }
     setPixmap(apariencia.copy(posX,posY,ancho,alto));
-    //setRect(0,0,ancho,alto);
 }
 
 void Enemigo::disparar()
 {
     if(enemigo==1)
         bala = new Meteorito(2,radio_b,posicionX_arma,posicionY_arma,velocidad_b, angulo_b);
-    else if(enemigo==2)
-        bala = new Meteorito(3, radio_b,posicionX_arma,posicionY_arma,velocidad_b, angulo_b);
+    else if(enemigo==2 || enemigo==3)
+        bala = new Meteorito(4, radio_b,posicionX_arma,posicionY_arma,velocidad_b, angulo_b);
+    else if(enemigo==4)
+        bala = new Meteorito(5, radio_b,posicionX_arma+10,posicionY_arma,velocidad_b, angulo_b);
+    else if(enemigo==5)
+        bala = new Meteorito(5, radio_b,posicionX_arma-10,posicionY_arma,velocidad_b, angulo_b);
 
     juego->disparosEnemigos.push_back(bala);
     bala->setA(15);
@@ -61,7 +77,8 @@ bool Enemigo::ActualizarPosicion()
         setPos(posicion_x,posicion_y);
         return false;
     }
-    else return true;
+    else
+        return true;
 }
 
 bool Enemigo::ColisionBala(unsigned int balajugador)
